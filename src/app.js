@@ -148,6 +148,8 @@ app.post("/movements", function (req, res) {
     movementExtraNotes,
   } = req.body;
 
+  // fake create movement in database
+  // creating the movement object
   const newMovement = MovementModel(
     movementName,
     movementSummary,
@@ -163,7 +165,10 @@ app.post("/movements", function (req, res) {
     movementResearchNotes,
     movementExtraNotes,
   );
+  // adding it to the array of movements
   movements.push(newMovement);
+
+  console.log("doing the request in the backend/movements endpoint");
 
   // http status codes (ex: 201, 200)
   res.status(201).json({
