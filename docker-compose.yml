@@ -1,15 +1,40 @@
-services: # Begins the list of programs Docker Compose should manage.
-mongo: # Service name - for Docker's internal network (not DB name).
-  image: mongo:8 # Prepared package Docker uses to create a container.
-  ports: # Publishes MongoDB container's port to my MAC.
-    - "27017:27017" # Host:Container (Mac port:Mongo container port)
-  environment: # Variables tell the MongoDB image to create an initial root user.
-    MONGO_INITDB_ROOT_USERNAME: admin # These credentials are acceptable for local learning.
-    MONGO_INITDB_ROOT_PASSWORD: password # Not safe as production credentials.
-  volumes:
-    - mongo-data:/data/db # mongo-data = Docker named volume
-      # /data/db = "when MongoDB writes database files, store them in mongo-data"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # env_file:
+    # - .env
+    ports:
+      - 8787:8787
+    depends_on:
+      - mongo
+    volumes:
+      - ./server:/app
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - internal
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    networks:
+      - internal
+      - default
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: karina
+      ME_CONFIG_BASICAUTH_PASSWORD: password
 
 volumes:
-  mongd-data: # Declares the named volume
+  data:
 
+networks:
+  internal:

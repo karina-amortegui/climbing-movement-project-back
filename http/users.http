@@ -1,0 +1,8 @@
+### craete user
+POST http://localhost:8787/users
+Content-Type: application/json
+
+{
+  "email": "karina@hottinger.com",
+  "password": "password"
+}

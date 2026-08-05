@@ -3,6 +3,8 @@ const express = require("express");
 
 const cors = require("cors");
 
+const User = require("./models/user.model.js");
+
 // ----------- MOCK DB --------------------------- START
 const adminCreds = {
   username: "admin",
@@ -265,8 +267,32 @@ app.get("/exercises", function (req, res) {
 //   )
 // }å
 
+app.get("/", (req, res) => res.send("Server working"));
+
 // 3. module.exports = app;
 // app.listen(8787, function () {
 //   console.log("Server is running on port 8787");
 // });
+
+// ------- move to users.controller.js --------------
+app.post("/users", async (req, res) => {
+  const { email, password } = req.body;
+  const newUser = new User({ email, password });
+  const savedUser = await newUser.save();
+  res.status(201).json({
+    message: "Creation successful",
+    data: savedUser,
+  });
+});
+
+app.get("/users", async (req, res) => {
+  const users = await User.find();
+
+  res.status(200).json({
+    message: "List successful",
+    data: users,
+    total: users.length,
+  });
+});
+
 module.exports = app;
