@@ -134,6 +134,7 @@ app.post("/login", function (req, res) {
 
 // creates a climbing movement
 app.post("/movements", function (req, res) {
+  console.log("POST /movements body =", req.body);
   const {
     movementName,
     movementSummary,
