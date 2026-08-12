@@ -1,3 +1,5 @@
+const Movement = require("./models/movement.model.js");
+
 // Load the express library
 const express = require("express");
 
@@ -11,42 +13,7 @@ const adminCreds = {
   password: "123456s*",
 };
 
-// This array temporarily acts like your database.
-// Keep in mind because this is an in memory array. Everything disappears when the server restarts.
-const movements = [];
-const MovementModel = (
-  movementName,
-  movementSummary,
-  movementDescription,
-  movementExecution,
-  movementDemand,
-  movementTerrain,
-  movementStatus,
-  movementWhenToUse,
-  movementHowToPerform,
-  movementCommonMistakes,
-  movementTags,
-  movementResearchNotes,
-  movementExtraNotes,
-) => ({
-  _id: movements.length + 1,
-  movementName,
-  movementSummary,
-  movementDescription,
-  movementExecution,
-  movementDemand,
-  movementTerrain,
-  movementStatus,
-  movementWhenToUse,
-  movementHowToPerform,
-  movementCommonMistakes,
-  movementTags,
-  movementResearchNotes,
-  movementExtraNotes: movementExtraNotes || "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deletedAt: null,
-});
+// ----------- MOCK DB---------------------------- START
 
 const exercises = [];
 const ExerciseModel = (
@@ -133,7 +100,7 @@ app.post("/login", function (req, res) {
 });
 
 // creates a climbing movement
-app.post("/movements", function (req, res) {
+app.post("/movements", async function (req, res) {
   console.log("POST /movements body =", req.body);
   const {
     movementName,
@@ -151,9 +118,9 @@ app.post("/movements", function (req, res) {
     movementExtraNotes,
   } = req.body;
 
-  // fake create movement in database
+  // create movement in database
   // creating the movement object
-  const newMovement = MovementModel(
+  const newMovement = new Movement({
     movementName,
     movementSummary,
     movementDescription,
@@ -167,9 +134,9 @@ app.post("/movements", function (req, res) {
     movementTags,
     movementResearchNotes,
     movementExtraNotes,
-  );
-  // adding it to the array of movements
-  movements.push(newMovement);
+});
+  // adding movement to MongoDB
+  await newMovement.save();
 
   console.log("doing the request in the backend/movements endpoint");
 
@@ -181,11 +148,13 @@ app.post("/movements", function (req, res) {
 });
 
 // returns all climbing movements
-app.get("/movements", function (req, res) {
+app.get("/movements", async function (req, res) {
+  // for GET route to store DB results in movementsFromDB
+  const movementsFromDB = await Movement.find();
   res.status(200).json({
     message: "movements fetched successfully",
-    data: movements,
-    total: movements.length,
+    data: movementsFromDB,
+    total: movementsFromDB.length,
   });
 });
 
@@ -232,41 +201,6 @@ app.get("/exercises", function (req, res) {
     total: exercises.length,
   });
 });
-
-// const submitMovment = () => {
-//   const movementData = {
-//     movementName: document.getElementById("name").value,
-//     movementSummary: document.getElementById("summary").value,
-//     movementDescription: document.getElementById("description").value,
-//     movementExecution: document.getElementById("execution").value,
-//     movementDemand: document.getElementById("demand").value,
-//     movementTerrain: document.getElementById("terrain").value,
-//     movementStatus: document.getElementById("status").value,
-//     movementWhenToUse: document.getElementById("when-to-use").value,
-//     movmentHowToPerform: document.getElementById("how-to-perform").value,
-//     movmentCommonMistakes: document.getElementById("common-mistakes").value,
-//     movmentTags: document.getElementById("tags").value,
-//     movementResearchNotes: document.getElementById("research-notes").value,
-//     movementExtraNotes: document.getElementById("extra-notes").value
-//   }
-
-//   const exerciseData = {
-//    exerciseName: document.getElementById("name").value,
-//    exerciseSummary: document.getElementById("summary").value,
-//    exerciseDescription: document.getElementById("description").value,
-//    exerciseDifficulty: document.getElementById("difficulty").value,
-//    exerciseStatus: document.getElementById("status").value,
-//    exerciseWhenToUse: document.getElementById("when-to-use").value,
-//    exerciseHowToPerform: document.getElementById("how-to-perform").value,
-//    exerciseCommonMistakes: document.getElementById("common-mistakes").value,
-//    exerciseTags: document.getElementById("tags").value,
-//    exerciseResearchNotes: document.getElementById("research-notes").value,
-//    exerciseExtraNotes: document.getElementById("extra-notes").value,
-//   };
-//   return (
-
-//   )
-// }å
 
 app.get("/", (req, res) => res.send("Server working"));
 

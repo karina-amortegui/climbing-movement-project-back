@@ -6,20 +6,21 @@
 POST {{baseUrl}}
 Content-Type: application/json
 
-[{
-  "name": "test",
-  "difficulty": 1,
-  "description": "testing",
-  "extraNotes": "test"
-},
-
 {
-  "name": "test2",
-  "difficulty": 1,
-  "description": "testing",
-  "extraNotes": "test"
+  "movementName": "Test Movement",
+  "movementSummary": "Test summary",
+  "movementDescription": "Test description",
+  // fields using schema's controlled choices
+  "movementExecution": "Static",
+  "movementDemand": ["Strength"],
+  "movementTerrain": ["Slab"],
+  // remaining required fields
+  "movementStatus": "Draft",
+  "movementWhenToUse": "Test when to use",
+  "movementHowToPerform": "Test how to perform",
+  "movementCommonMistakes": "Test common mistakes",
+  "movementTags": ["Test tags"]
 }
-]
 
 
 ### get movements

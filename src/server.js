@@ -6,6 +6,8 @@ const PORT = 8787;
 dbConnect()
   .then(() => {
     console.log("starting server after db connection");
+    
+    if(process.env.NODE_ENV !== 'production') {
     const server = app.listen(PORT, function () {
       console.log("Server is running on PORT:", PORT);
     });
@@ -15,7 +17,7 @@ dbConnect()
       server.close(() => {
         process.exit(0);
       });
-    });
+    })};
   })
   .catch((err) => {
     console.error("Failed to connect to the database:", err);
