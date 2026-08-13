@@ -60,7 +60,12 @@ app.use(express.static("public"));
 // Express automatically converts JSON into a JS object
 // Allows you to write req.body.name instead of raw text
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  // Put your deployed Vite frontend URL here. 
+  // You can also use process.env.FRONTEND_URL to avoid hardcoding it!
+  origin: ['https://climbing-movement-project-front.vercel.app/', 'http://localhost:5173'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
 
 // 2. add ping endpoint
 //GET -> give me some information
