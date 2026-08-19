@@ -1,4 +1,3 @@
-const Movement = require("./models/movement.model.js");
 
 // Load the express library
 const express = require("express");
@@ -6,6 +5,8 @@ const express = require("express");
 const cors = require("cors");
 
 const User = require("./models/user.model.js");
+
+const movementRouter = require("./routes/movement.routes.js");
 
 // ----------- MOCK DB --------------------------- START
 const adminCreds = {
@@ -67,6 +68,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
+app.use("/movements", movementRouter);
+
 // 2. add ping endpoint
 //GET -> give me some information
 app.get("/ping", function (req, res) {
@@ -90,7 +93,6 @@ app.get("/ping", function (req, res) {
   });
 });
 
-// POST -> create something (save)
 app.post("/login", function (req, res) {
   const username = req.body.username;
   const password = req.body.password;
@@ -102,65 +104,6 @@ app.post("/login", function (req, res) {
   }
 
   res.redirect("/home.html");
-});
-
-// creates a climbing movement
-app.post("/movements", async function (req, res) {
-  console.log("POST /movements body =", req.body);
-  const {
-    movementName,
-    movementSummary,
-    movementDescription,
-    movementExecution,
-    movementDemand,
-    movementTerrain,
-    movementStatus,
-    movementWhenToUse,
-    movementHowToPerform,
-    movementCommonMistakes,
-    movementTags,
-    movementResearchNotes,
-    movementExtraNotes,
-  } = req.body;
-
-  // create movement in database
-  // creating the movement object
-  const newMovement = new Movement({
-    movementName,
-    movementSummary,
-    movementDescription,
-    movementExecution,
-    movementDemand,
-    movementTerrain,
-    movementStatus,
-    movementWhenToUse,
-    movementHowToPerform,
-    movementCommonMistakes,
-    movementTags,
-    movementResearchNotes,
-    movementExtraNotes,
-});
-  // adding movement to MongoDB
-  await newMovement.save();
-
-  console.log("doing the request in the backend/movements endpoint");
-
-  // http status codes (ex: 201, 200)
-  res.status(201).json({
-    message: "movement created successfully",
-    data: newMovement,
-  });
-});
-
-// returns all climbing movements
-app.get("/movements", async function (req, res) {
-  // for GET route to store DB results in movementsFromDB
-  const movementsFromDB = await Movement.find();
-  res.status(200).json({
-    message: "movements fetched successfully",
-    data: movementsFromDB,
-    total: movementsFromDB.length,
-  });
 });
 
 app.post("/exercises", function (req, res) {

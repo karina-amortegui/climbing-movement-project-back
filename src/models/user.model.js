@@ -6,7 +6,7 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     deletedAt: { type: Date, default: null },
   },
-  { timestamps: true },
+  { timestamps: true }, // adds createdAt and updatedAt automatically
 );
 
 const User = model("user", userSchema);
