@@ -10,11 +10,9 @@ Content-Type: application/json
   "movementName": "Test Movement",
   "movementSummary": "Test summary",
   "movementDescription": "Test description",
-  // fields using schema's controlled choices
   "movementExecution": "Static",
   "movementDemand": ["Strength"],
   "movementTerrain": ["Slab"],
-  // remaining required fields
   "movementStatus": "Draft",
   "movementWhenToUse": "Test when to use",
   "movementHowToPerform": "Test how to perform",
@@ -22,8 +20,19 @@ Content-Type: application/json
   "movementTags": ["Test tags"]
 }
 
-
 ### get movements
 GET {{baseUrl}}
 
+### get movement by id
+GET {{baseUrl}}/
+
+### update movement by id
+PATCH {{baseUrl}}/6a848788f29e21d2cae475ce
+# tells Express: I'm sending JSON data in the request body
+Content-Type: application/json 
+
+# what I want changed
+{
+  "movementStatus": "draft"
+}
 

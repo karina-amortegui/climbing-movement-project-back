@@ -36,22 +36,78 @@ async function createMovement(req, res) {
 await newMovement.save();
 
 res.status(201).json({
-    message: "movement created successfully",
+    message: "Movement created successfully",
     data: newMovement,
   });
 }
 
-async function retrieveMovements(req, res) {
+async function getMovements(req, res) {
   const movementsFromDB = await Movement.find();
   res.status(200).json({
-    message: "movements fetched successfully",
+    message: "Movements fetched successfully",
     data: movementsFromDB,
     total: movementsFromDB.length,
   });
 }
 
+async function getMovementById(req, res) {
+  const { id } = req.params;
+
+  try {
+    const movementFromDB = await Movement.findById(id);
+    if (movementFromDB === null) {
+    return res.status(404).json({
+      message: "The requested movement doesn't exist"
+    });
+  }
+    res.status(200).json({
+      message: "Movement successfully retrieved",
+      data: movementFromDB,
+    });
+  }
+  catch (err) {
+    res.status(400).json({
+      message: "Invalid movement ID"
+    });
+  }
+}
+
+async function updateMovementById(req, res) {
+  const { id } = req.params;
+  const updates = req.body;
+  
+  try {
+    const movementFromDB = await Movement.findByIdAndUpdate
+    (
+      id, updates, { returnDocument: "after", runValidators: true }
+    );
+    if (movementFromDB === null) {
+    return res.status(404).json({
+      message: "Valid ID but movement does not exist"
+    });
+  }
+    res.status(200).json({
+      message: "Movement successfully updated",
+      data: movementFromDB,
+    });
+  }
+  catch (err) {
+    if (err.name === "CastError") {
+    res.status(400).json({
+      message: "Invalid movement ID"
+    });
+  } else if (err.name === "ValidationError") {
+    res.status(400).json({
+      message: "Invalid movement data"
+    });
+  }
+  }
+}
+
 // makes functions available to other files to import
 module.exports = {
   createMovement,
-  retrieveMovements,
+  getMovements,
+  getMovementById,
+  updateMovementById,
 };
