@@ -27,12 +27,12 @@ GET {{baseUrl}}
 GET {{baseUrl}}/
 
 ### update movement by id
-PATCH {{baseUrl}}/6a848788f29e21d2cae475ce
+PATCH {{baseUrl}}/
 # tells Express: I'm sending JSON data in the request body
 Content-Type: application/json 
 
-# what I want changed
-{
-  "movementStatus": "draft"
-}
+# what I want changed , ex: { "movementStatus": "draft" }
+
+### (hard) delete movement by id
+DELETE {{baseUrl}}/
 

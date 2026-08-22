@@ -104,10 +104,33 @@ async function updateMovementById(req, res) {
   }
 }
 
+async function deleteMovementById(req, res) {
+  const { id } = req.params;
+
+  try {
+    const movementFromDB = await Movement.findByIdAndDelete(id);
+     if (movementFromDB === null) {
+    return res.status(404).json({
+      message: "Valid ID but movement does not exist"
+    });
+  }
+    res.status(200).json({
+      message: "Movement permanently deleted",
+      data: movementFromDB,
+    });
+  }
+  catch (err) {
+    res.status(400).json({
+      message: "Unable to delete movement"
+    });
+  }
+}
+
 // makes functions available to other files to import
 module.exports = {
   createMovement,
   getMovements,
   getMovementById,
   updateMovementById,
+  deleteMovementById,
 };
