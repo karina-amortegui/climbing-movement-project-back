@@ -5,15 +5,16 @@
 ### create new movement
 POST {{baseUrl}}
 Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
 
 {
-  "movementName": "Test Movement",
+  "movementName": "JWT Test Movement",
   "movementSummary": "Test summary",
   "movementDescription": "Test description",
-  "movementExecution": "Static",
-  "movementDemand": ["Strength"],
-  "movementTerrain": ["Slab"],
-  "movementStatus": "Draft",
+  "movementExecution": "static",
+  "movementDemand": ["strength"],
+  "movementTerrain": ["slab"],
+  "movementStatus": "draft",
   "movementWhenToUse": "Test when to use",
   "movementHowToPerform": "Test how to perform",
   "movementCommonMistakes": "Test common mistakes",
@@ -24,15 +25,17 @@ Content-Type: application/json
 GET {{baseUrl}}
 
 ### get movement by id
-GET {{baseUrl}}/
+GET {{baseUrl}}/put mongodb movement id here
 
 ### update movement by id
-PATCH {{baseUrl}}/
+PATCH {{baseUrl}}/put mongodb movement id here
 # tells Express: I'm sending JSON data in the request body
 Content-Type: application/json 
+Authorization: Bearer YOUR_TOKEN_HERE
 
 # what I want changed , ex: { "movementStatus": "draft" }
 
 ### (hard) delete movement by id
-DELETE {{baseUrl}}/
+DELETE {{baseUrl}}/put mongodb movement id here
+Authorization: Bearer YOUR_TOKEN_HERE
 

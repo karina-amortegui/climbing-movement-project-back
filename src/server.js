@@ -1,3 +1,4 @@
+require("dotenv").config();
 const app = require("./app.js");
 const dbConnect = require("./config/db.connect.js");
 

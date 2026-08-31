@@ -1,14 +1,17 @@
 const express = require("express")
+
 const { 
   createMovement, getMovements, getMovementById, 
   updateMovementById, deleteMovementById,
-} = require("../controllers/movement.controller.js");
+} = require("../controllers/movement.controller");
+
+const requireAuth = require("../middleware/auth.middleware")
+
 const router = express.Router();
-// when this router receives a POST request at its root (/), run the createMovement controller function
-router.post("/", createMovement);
+router.post("/", requireAuth, createMovement);
 router.get("/", getMovements); 
 router.get("/:id", getMovementById); 
-router.patch("/:id", updateMovementById);
-router.delete("/:id", deleteMovementById);
+router.patch("/:id", requireAuth, updateMovementById);
+router.delete("/:id", requireAuth, deleteMovementById);
 
 module.exports = router;

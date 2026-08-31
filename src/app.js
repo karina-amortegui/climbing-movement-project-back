@@ -1,18 +1,12 @@
 
 // Load the express library
 const express = require("express");
-
 const cors = require("cors");
-
-const User = require("./models/user.model.js");
-
-const movementRouter = require("./routes/movement.routes.js");
-
-// ----------- MOCK DB --------------------------- START
-const adminCreds = {
-  username: "admin",
-  password: "123456s*",
-};
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("./models/admin.model");
+const Admin = require("./models/admin.model");
+const movementRouter = require("./routes/movement.routes");
 
 // ----------- MOCK DB---------------------------- START
 
@@ -65,7 +59,7 @@ app.use(cors({
   // Put your deployed Vite frontend URL here. 
   // You can also use process.env.FRONTEND_URL to avoid hardcoding it!
   origin: ['https://climbing-movement-project-front.vercel.app/', 'http://localhost:5173'], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 }));
 
 app.use("/movements", movementRouter);
@@ -93,17 +87,38 @@ app.get("/ping", function (req, res) {
   });
 });
 
-app.post("/login", function (req, res) {
+app.post("/login", async function (req, res) {
   const username = req.body.username;
   const password = req.body.password;
+  
+  const admin = await Admin.findOne({ username: username });
 
-  if (username !== adminCreds.username || password !== adminCreds.password) {
+  if (admin === null) {
     return res.status(401).send({
       message: "invalid credentials",
     });
-  }
+  };
 
-  res.redirect("/home.html");
+  const passwordMatches = await bcrypt.compare(password, admin.passwordHash);
+
+  if(passwordMatches === false) {
+    return res.status(401).send({
+      message: "invalid credentials",
+    });
+  };
+
+  const token = jwt.sign(
+    {
+      adminId: admin._id,
+      role: admin.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  res.status(200).json({
+    token: token,
+  });
 });
 
 app.post("/exercises", function (req, res) {

@@ -1,8 +1,8 @@
-### craete user
-POST http://localhost:8787/users
+### admin login
+POST http://localhost:8787/login
 Content-Type: application/json
 
 {
-  "email": "karina@hottinger.com",
-  "password": "password"
+  "username": "admin",
+  "password": "YOUR_ADMIN_PASSWORD"
 }
