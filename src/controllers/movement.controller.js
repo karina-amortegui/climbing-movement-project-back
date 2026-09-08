@@ -15,6 +15,7 @@ async function createMovement(req, res) {
     movementTags,
     movementResearchNotes,
     movementExtraNotes,
+    exampleImages,
   } = req.body;
 
   const newMovement = new Movement({
@@ -31,6 +32,7 @@ async function createMovement(req, res) {
     movementTags,
     movementResearchNotes,
     movementExtraNotes,
+    exampleImages,
 });
 
 await newMovement.save();

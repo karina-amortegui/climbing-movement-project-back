@@ -8,7 +8,7 @@ Content-Type: application/json
 Authorization: Bearer YOUR_TOKEN_HERE
 
 {
-  "movementName": "JWT Test Movement",
+  "movementName": "Image Array Test2",
   "movementSummary": "Test summary",
   "movementDescription": "Test description",
   "movementExecution": "static",
@@ -18,7 +18,20 @@ Authorization: Bearer YOUR_TOKEN_HERE
   "movementWhenToUse": "Test when to use",
   "movementHowToPerform": "Test how to perform",
   "movementCommonMistakes": "Test common mistakes",
-  "movementTags": ["Test tags"]
+  "movementTags": ["Test tags"],
+  "exampleImages": [
+    {
+      "url": "https://upload.wikimedia.org/example-image.jpg",
+      "altText": "Climber demonstrating the movement",
+      "creator": "Test Creator",
+      "source": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Example.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "caption": "Test climbing movement image",
+      "order": 1
+    }
+  ]
 }
 
 ### get movements
@@ -32,6 +45,22 @@ PATCH {{baseUrl}}/put mongodb movement id here
 # tells Express: I'm sending JSON data in the request body
 Content-Type: application/json 
 Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "exampleImages": [
+    {
+      "url": "https://upload.wikimedia.org/example-image.jpg",
+      "altText": "Climber demonstrating the movement",
+      "creator": "Test Creator",
+      "source": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Example.jpg",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "caption": "Updated test caption",
+      "order": 1
+    }
+  ]
+}
 
 # what I want changed , ex: { "movementStatus": "draft" }
 
