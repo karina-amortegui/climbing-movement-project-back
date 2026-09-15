@@ -4,7 +4,8 @@
   "description": "CRUD system to save climbing movements then match movement to exercises. It will have a form for POSTing to Server to save into DB and then relate exercises to movement. Can also manage data in DB with CRUD operations.",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "dev": "tsx --watch src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tailwind": "npx @tailwindcss/cli -i ./public/css/input.css -o ./public/css/output.css --watch"

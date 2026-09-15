@@ -42,11 +42,11 @@ GET {{baseUrl}}/put mongodb movement id here
 
 ### update movement by id
 PATCH {{baseUrl}}/put mongodb movement id here
-# tells Express: I'm sending JSON data in the request body
 Content-Type: application/json 
 Authorization: Bearer YOUR_TOKEN_HERE
 
 {
+
   "exampleImages": [
     {
       "url": "https://upload.wikimedia.org/example-image.jpg",
@@ -61,8 +61,6 @@ Authorization: Bearer YOUR_TOKEN_HERE
     }
   ]
 }
-
-# what I want changed , ex: { "movementStatus": "draft" }
 
 ### (hard) delete movement by id
 DELETE {{baseUrl}}/put mongodb movement id here
