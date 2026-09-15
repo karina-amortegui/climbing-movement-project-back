@@ -2,7 +2,7 @@ require("dotenv").config();
 const app = require("./app.js");
 const dbConnect = require("./config/db.connect.js");
 
-const PORT = 8787;
+const PORT = process.env.PORT || 8787;
 
 dbConnect()
   .then(() => {
@@ -20,6 +20,6 @@ dbConnect()
       });
     })};
   })
-  .catch((err) => {
+  .catch((err: unknown) => {
     console.error("Failed to connect to the database:", err);
   });

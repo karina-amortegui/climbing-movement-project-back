@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const MONGO_URI = "mongodb://localhost:27017/climbing-movement-project";
+const MONGO_URI = process.env.MONGO_URI;
 
 async function dbConnect() {
   try {

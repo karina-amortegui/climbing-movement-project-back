@@ -1,6 +1,39 @@
+import { Request, Response } from "express";
+
 const Movement = require("../models/movement.model.js");
 
-async function createMovement(req, res) {
+type ExampleImage = {
+  url: string;
+  altText: string;
+  creator: string;
+  source: string;
+  sourceUrl: string;
+  license: string;
+  licenseUrl: string;
+  caption?: string;
+  order: number;
+};
+
+type CreateMovementType = {
+  movementName: string;
+  movementSummary: string;
+  movementDescription: string;
+  movementExecution: string;
+  movementDemand: string[];
+  movementTerrain: string[];
+  movementStatus: string;
+  movementWhenToUse: string;
+  movementHowToPerform: string;
+  movementCommonMistakes: string;
+  movementTags: string[];
+  movementResearchNotes: string;
+  movementExtraNotes: string;
+  exampleImages: ExampleImage[];
+}
+
+// Zod, Yup
+
+async function createMovement(req: Request, res: Response) {
   const {
     movementName,
     movementSummary,
@@ -33,17 +66,17 @@ async function createMovement(req, res) {
     movementResearchNotes,
     movementExtraNotes,
     exampleImages,
-});
+  });
 
-await newMovement.save();
+  await newMovement.save();
 
-res.status(201).json({
+  res.status(201).json({
     message: "Movement created successfully",
     data: newMovement,
   });
 }
 
-async function getMovements(req, res) {
+async function getMovements(req: Request, res: Response) {
   const movementsFromDB = await Movement.find();
   res.status(200).json({
     message: "Movements fetched successfully",
@@ -52,16 +85,16 @@ async function getMovements(req, res) {
   });
 }
 
-async function getMovementById(req, res) {
+async function getMovementById(req: Request, res: Response) {
   const { id } = req.params;
 
   try {
     const movementFromDB = await Movement.findById(id);
     if (movementFromDB === null) {
-    return res.status(404).json({
-      message: "The requested movement doesn't exist"
-    });
-  }
+      return res.status(404).json({
+        message: "The requested movement doesn't exist"
+      });
+    }
     res.status(200).json({
       message: "Movement successfully retrieved",
       data: movementFromDB,
@@ -74,48 +107,53 @@ async function getMovementById(req, res) {
   }
 }
 
-async function updateMovementById(req, res) {
+async function updateMovementById(req: Request, res: Response) {
   const { id } = req.params;
   const updates = req.body;
-  
+
   try {
     const movementFromDB = await Movement.findByIdAndUpdate
-    (
-      id, updates, { returnDocument: "after", runValidators: true }
-    );
+      (
+        id, updates, { returnDocument: "after", runValidators: true }
+      );
     if (movementFromDB === null) {
-    return res.status(404).json({
-      message: "Valid ID but movement does not exist"
-    });
-  }
+      return res.status(404).json({
+        message: "Valid ID but movement does not exist"
+      });
+    }
     res.status(200).json({
       message: "Movement successfully updated",
       data: movementFromDB,
     });
   }
   catch (err) {
+    if (!(err instanceof Error)) {
+      return res.status(500).json({
+        message: "Unexpected server error"
+      });
+    }
     if (err.name === "CastError") {
-    res.status(400).json({
-      message: "Invalid movement ID"
-    });
-  } else if (err.name === "ValidationError") {
-    res.status(400).json({
-      message: "Invalid movement data"
-    });
-  }
+      res.status(400).json({
+        message: "Invalid movement ID"
+      });
+    } else if (err.name === "ValidationError") {
+      res.status(400).json({
+        message: "Invalid movement data"
+      });
+    }
   }
 }
 
-async function deleteMovementById(req, res) {
+async function deleteMovementById(req: Request, res: Response) {
   const { id } = req.params;
 
   try {
     const movementFromDB = await Movement.findByIdAndDelete(id);
-     if (movementFromDB === null) {
-    return res.status(404).json({
-      message: "Valid ID but movement does not exist"
-    });
-  }
+    if (movementFromDB === null) {
+      return res.status(404).json({
+        message: "Valid ID but movement does not exist"
+      });
+    }
     res.status(200).json({
       message: "Movement permanently deleted",
       data: movementFromDB,
