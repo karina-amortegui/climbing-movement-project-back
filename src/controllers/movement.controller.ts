@@ -1,6 +1,36 @@
 import { Request, Response } from "express";
+import { z } from "zod";
 
 const Movement = require("../models/movement.model.js");
+
+const exampleImageSchema = z.object({
+  url: z.string().min(1),
+  altText: z.string().min(1),
+  creator: z.string().min(1),
+  source: z.string().min(1),
+  sourceUrl: z.string().min(1),
+  license: z.string().min(1),
+  licenseUrl: z.string().min(1),
+  caption: z.string().optional(),
+  order: z.number(),
+});
+
+const createMovementSchema = z.object({
+  movementName: z.string().min(1),
+  movementSummary: z.string().min(1),
+  movementDescription: z.string().min(1),
+  movementWhenToUse: z.string().min(1),
+  movementHowToPerform: z.string().min(1),
+  movementCommonMistakes: z.string().min(1),
+  movementExecution: z.enum(["static", "dynamic"]), 
+  movementDemand: z.array(z.enum(["strength", "power", "balance", "coordination", "precision"])),
+  movementTerrain: z.array(z.enum(["slab", "vertical", "overhang", "roof", "dihedral", "arete"])),
+  movementStatus: z.enum(["draft", "needs-review", "published"]),
+  movementTags: z.array(z.string().min(1)),
+  movementResearchNotes: z.string().optional(),
+  movementExtraNotes: z.string().optional(),
+  exampleImages: z.array(exampleImageSchema).optional(),
+  });
 
 type ExampleImage = {
   url: string;
@@ -34,6 +64,9 @@ type CreateMovementType = {
 // Zod, Yup
 
 async function createMovement(req: Request, res: Response) {
+  
+  const validatedData = createMovementSchema.parse(req.body);
+  
   const {
     movementName,
     movementSummary,
@@ -49,7 +82,7 @@ async function createMovement(req: Request, res: Response) {
     movementResearchNotes,
     movementExtraNotes,
     exampleImages,
-  } = req.body;
+  } = validatedData;
 
   const newMovement = new Movement({
     movementName,
