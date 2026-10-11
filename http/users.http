@@ -6,3 +6,7 @@ Content-Type: application/json
   "username": "admin",
   "password": "YOUR_ADMIN_PASSWORD"
 }
+
+### set featured movement
+PATCH http://localhost:8787/movements/set-featured/
+Authorization: Bearer YOUR_TOKEN_HERE

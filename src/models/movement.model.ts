@@ -27,6 +27,7 @@ const movementSchema = new Schema({
   movementResearchNotes: { type: String, required: false },
   movementExtraNotes: { type: String, required: false },
   exampleImages: { type: [exampleImageSchema], required: false },
+  isFeatured: { type: Boolean, default: false }
 });
 
 const Movement = model("movement", movementSchema);

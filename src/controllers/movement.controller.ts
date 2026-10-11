@@ -61,8 +61,6 @@ type CreateMovementType = {
   exampleImages: ExampleImage[];
 }
 
-// Zod, Yup
-
 async function createMovement(req: Request, res: Response) {
   
   const validatedData = createMovementSchema.parse(req.body);
@@ -199,11 +197,45 @@ async function deleteMovementById(req: Request, res: Response) {
   }
 }
 
+async function setFeatured(req: Request, res: Response) {
+  const { id } = req.params;
+
+  const movement = await Movement.findById(id);
+
+
+  
+
+  if (!movement) {
+    return res.status(404).json({
+      message: "Movement not found",
+    });
+  }
+
+  const featuredPrev = await Movement.updateMany({isFeatured: true}, {$set: {isFeatured: false}});
+  const featured = await Movement.findByIdAndUpdate(id, {$set: {isFeatured: true}}, {new: true});
+
+  res.status(200).json({featured: featured});
+}
+
+async function getFeatured(req: Request, res: Response) {
+  const featured = await Movement.findOne({isFeatured: true})
+  if(!featured) {
+    return res.status(404).json({
+      featured: null
+    })
+  }
+  res.status(200).json({
+      featured: featured
+  })
+}
+
 // makes functions available to other files to import
-module.exports = {
+export {
   createMovement,
   getMovements,
   getMovementById,
   updateMovementById,
   deleteMovementById,
+  setFeatured,
+  getFeatured,
 };
