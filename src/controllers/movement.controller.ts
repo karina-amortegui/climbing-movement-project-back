@@ -22,15 +22,19 @@ const createMovementSchema = z.object({
   movementWhenToUse: z.string().min(1),
   movementHowToPerform: z.string().min(1),
   movementCommonMistakes: z.string().min(1),
-  movementExecution: z.enum(["static", "dynamic"]), 
-  movementDemand: z.array(z.enum(["strength", "power", "balance", "coordination", "precision"])),
-  movementTerrain: z.array(z.enum(["slab", "vertical", "overhang", "roof", "dihedral", "arete"])),
+  movementExecution: z.enum(["static", "dynamic"]),
+  movementDemand: z.array(
+    z.enum(["strength", "power", "balance", "coordination", "precision"]),
+  ),
+  movementTerrain: z.array(
+    z.enum(["slab", "vertical", "overhang", "roof", "dihedral", "arete"]),
+  ),
   movementStatus: z.enum(["draft", "needs-review", "published"]),
   movementTags: z.array(z.string().min(1)),
   movementResearchNotes: z.string().optional(),
   movementExtraNotes: z.string().optional(),
   exampleImages: z.array(exampleImageSchema).optional(),
-  });
+});
 
 type ExampleImage = {
   url: string;
@@ -59,12 +63,11 @@ type CreateMovementType = {
   movementResearchNotes: string;
   movementExtraNotes: string;
   exampleImages: ExampleImage[];
-}
+};
 
 async function createMovement(req: Request, res: Response) {
-  
   const validatedData = createMovementSchema.parse(req.body);
-  
+
   const {
     movementName,
     movementSummary,
@@ -123,17 +126,16 @@ async function getMovementById(req: Request, res: Response) {
     const movementFromDB = await Movement.findById(id);
     if (movementFromDB === null) {
       return res.status(404).json({
-        message: "The requested movement doesn't exist"
+        message: "The requested movement doesn't exist",
       });
     }
     res.status(200).json({
       message: "Movement successfully retrieved",
       data: movementFromDB,
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(400).json({
-      message: "Invalid movement ID"
+      message: "Invalid movement ID",
     });
   }
 }
@@ -143,33 +145,32 @@ async function updateMovementById(req: Request, res: Response) {
   const updates = req.body;
 
   try {
-    const movementFromDB = await Movement.findByIdAndUpdate
-      (
-        id, updates, { returnDocument: "after", runValidators: true }
-      );
+    const movementFromDB = await Movement.findByIdAndUpdate(id, updates, {
+      returnDocument: "after",
+      runValidators: true,
+    });
     if (movementFromDB === null) {
       return res.status(404).json({
-        message: "Valid ID but movement does not exist"
+        message: "Valid ID but movement does not exist",
       });
     }
     res.status(200).json({
       message: "Movement successfully updated",
       data: movementFromDB,
     });
-  }
-  catch (err) {
+  } catch (err) {
     if (!(err instanceof Error)) {
       return res.status(500).json({
-        message: "Unexpected server error"
+        message: "Unexpected server error",
       });
     }
     if (err.name === "CastError") {
       res.status(400).json({
-        message: "Invalid movement ID"
+        message: "Invalid movement ID",
       });
     } else if (err.name === "ValidationError") {
       res.status(400).json({
-        message: "Invalid movement data"
+        message: "Invalid movement data",
       });
     }
   }
@@ -182,17 +183,16 @@ async function deleteMovementById(req: Request, res: Response) {
     const movementFromDB = await Movement.findByIdAndDelete(id);
     if (movementFromDB === null) {
       return res.status(404).json({
-        message: "Valid ID but movement does not exist"
+        message: "Valid ID but movement does not exist",
       });
     }
     res.status(200).json({
       message: "Movement permanently deleted",
       data: movementFromDB,
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(400).json({
-      message: "Unable to delete movement"
+      message: "Unable to delete movement",
     });
   }
 }
@@ -202,31 +202,35 @@ async function setFeatured(req: Request, res: Response) {
 
   const movement = await Movement.findById(id);
 
-
-  
-
   if (!movement) {
     return res.status(404).json({
       message: "Movement not found",
     });
   }
 
-  const featuredPrev = await Movement.updateMany({isFeatured: true}, {$set: {isFeatured: false}});
-  const featured = await Movement.findByIdAndUpdate(id, {$set: {isFeatured: true}}, {new: true});
+  const featuredPrev = await Movement.updateMany(
+    { isFeatured: true },
+    { $set: { isFeatured: false } },
+  );
+  const featured = await Movement.findByIdAndUpdate(
+    id,
+    { $set: { isFeatured: true } },
+    { new: true },
+  );
 
-  res.status(200).json({featured: featured});
+  res.status(200).json({ featured: featured });
 }
 
 async function getFeatured(req: Request, res: Response) {
-  const featured = await Movement.findOne({isFeatured: true})
-  if(!featured) {
+  const featured = await Movement.findOne({ isFeatured: true });
+  if (!featured) {
     return res.status(404).json({
-      featured: null
-    })
+      featured: null,
+    });
   }
   res.status(200).json({
-      featured: featured
-  })
+    featured: featured,
+  });
 }
 
 // makes functions available to other files to import
