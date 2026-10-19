@@ -111,9 +111,21 @@ async function createMovement(req: Request, res: Response) {
 }
 
 async function getMovements(req: Request, res: Response) {
-  const movementsFromDB = await Movement.find();
+  const movementsFromDB = await Movement.find({
+    movementStatus: "published",
+  });
   res.status(200).json({
     message: "Movements fetched successfully",
+    data: movementsFromDB,
+    total: movementsFromDB.length,
+  });
+}
+
+async function getAllMovements(req: Request, res: Response) {
+  const movementsFromDB = await Movement.find();
+
+  res.status(200).json({
+    message: "All movements fetched successfully",
     data: movementsFromDB,
     total: movementsFromDB.length,
   });
@@ -237,6 +249,7 @@ async function getFeatured(req: Request, res: Response) {
 export {
   createMovement,
   getMovements,
+  getAllMovements,
   getMovementById,
   updateMovementById,
   deleteMovementById,

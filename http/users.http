@@ -8,5 +8,12 @@ Content-Type: application/json
 }
 
 ### set featured movement
-PATCH http://localhost:8787/movements/set-featured/
-Authorization: Bearer YOUR_TOKEN_HERE
+PATCH http://localhost:8787/movements/set-featured/6acef3fe7b6cfaffc09b7de1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNmE5NGIwMTAyNGVjMmU4MThmZGViZmRjIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkyMzYyNDU3LCJleHAiOjE3OTIzNjYwNTd9.prkOlxJkZKW89fZKJj3kO9aC-Hko0V_SWxbOH2npCis
+
+
+
+//YOUR_TOKEN_HERE
+
+
+

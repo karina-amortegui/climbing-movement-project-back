@@ -34,8 +34,12 @@ Authorization: Bearer YOUR_TOKEN_HERE
   ]
 }
 
-### get movements
+### get "published" movements
 GET {{baseUrl}}
+
+### get all movements (admin)
+GET {{baseUrl}}/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNmE5NGIwMTAyNGVjMmU4MThmZGViZmRjIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkyMzcwNTc3LCJleHAiOjE3OTIzNzQxNzd9.SPVsBinUeV3KqVtJpdadOsA_CoeirdIMiGrRrV-b-5E
 
 ### get movement by id
 GET {{baseUrl}}/put mongodb movement id here
