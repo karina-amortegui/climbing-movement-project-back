@@ -7,64 +7,20 @@ POST {{baseUrl}}
 Content-Type: application/json
 Authorization: Bearer YOUR_TOKEN_HERE
 
-{
-  "movementName": "Image Array Test2",
-  "movementSummary": "Test summary",
-  "movementDescription": "Test description",
-  "movementExecution": "static",
-  "movementDemand": ["strength"],
-  "movementTerrain": ["slab"],
-  "movementStatus": "draft",
-  "movementWhenToUse": "Test when to use",
-  "movementHowToPerform": "Test how to perform",
-  "movementCommonMistakes": "Test common mistakes",
-  "movementTags": ["Test tags"],
-  "exampleImages": [
-    {
-      "url": "https://upload.wikimedia.org/example-image.jpg",
-      "altText": "Climber demonstrating the movement",
-      "creator": "Test Creator",
-      "source": "Wikimedia Commons",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Example.jpg",
-      "license": "CC BY-SA 4.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "caption": "Test climbing movement image",
-      "order": 1
-    }
-  ]
-}
-
 ### get "published" movements
 GET {{baseUrl}}
 
 ### get all movements (admin)
 GET {{baseUrl}}/admin/all
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNmE5NGIwMTAyNGVjMmU4MThmZGViZmRjIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkyMzcwNTc3LCJleHAiOjE3OTIzNzQxNzd9.SPVsBinUeV3KqVtJpdadOsA_CoeirdIMiGrRrV-b-5E
+Authorization: Bearer YOUR_TOKEN_HERE
 
 ### get movement by id
 GET {{baseUrl}}/put mongodb movement id here
 
 ### update movement by id
-PATCH {{baseUrl}}/put mongodb movement id here
+PATCH {{baseUrl}}/put mongodb movement id here 
 Content-Type: application/json 
 Authorization: Bearer YOUR_TOKEN_HERE
-
-{
-
-  "exampleImages": [
-    {
-      "url": "https://upload.wikimedia.org/example-image.jpg",
-      "altText": "Climber demonstrating the movement",
-      "creator": "Test Creator",
-      "source": "Wikimedia Commons",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Example.jpg",
-      "license": "CC BY-SA 4.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "caption": "Updated test caption",
-      "order": 1
-    }
-  ]
-}
 
 ### (hard) delete movement by id
 DELETE {{baseUrl}}/put mongodb movement id here

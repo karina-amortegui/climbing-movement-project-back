@@ -15,14 +15,14 @@ const exampleImageSchema = z.object({
   order: z.number(),
 });
 
-const createMovementSchema = z.object({
+const movementBaseSchema = z.object({
   movementName: z.string().min(1),
-  movementSummary: z.string().min(1),
-  movementDescription: z.string().min(1),
-  movementWhenToUse: z.string().min(1),
-  movementHowToPerform: z.string().min(1),
-  movementCommonMistakes: z.string().min(1),
-  movementExecution: z.enum(["static", "dynamic"]),
+  movementSummary: z.string(),
+  movementDescription: z.string(),
+  movementWhenToUse: z.string(),
+  movementHowToPerform: z.string(),
+  movementCommonMistakes: z.string(),
+  movementExecution: z.enum(["static", "dynamic", ""]),
   movementDemand: z.array(
     z.enum(["strength", "power", "balance", "coordination", "precision"]),
   ),
@@ -30,11 +30,44 @@ const createMovementSchema = z.object({
     z.enum(["slab", "vertical", "overhang", "roof", "dihedral", "arete"]),
   ),
   movementStatus: z.enum(["draft", "needs-review", "published"]),
-  movementTags: z.array(z.string().min(1)),
+  movementTags: z.array(z.string()),
   movementResearchNotes: z.string().optional(),
   movementExtraNotes: z.string().optional(),
   exampleImages: z.array(exampleImageSchema).optional(),
 });
+
+const createMovementSchema = movementBaseSchema.refine(
+  (movement) => {
+    if (movement.movementStatus !== "published") {
+      return true;
+    }
+
+    const requiredTextFields = [
+      movement.movementName,
+      movement.movementSummary,
+      movement.movementDescription,
+      movement.movementWhenToUse,
+      movement.movementHowToPerform,
+      movement.movementCommonMistakes,
+    ];
+
+    return (
+      requiredTextFields.every(
+        (value) =>
+          value.trim().length > 0 && value.trim().toUpperCase() !== "UNKNOWN",
+      ) &&
+      movement.movementExecution !== "" &&
+      movement.movementDemand.length > 0 &&
+      movement.movementTerrain.length > 0 &&
+      movement.movementTags.every(
+        (tag) => tag.trim().toUpperCase() !== "UNKNOWN",
+      )
+    );
+  },
+  {
+    message: "Published movements must have complete information.",
+  },
+);
 
 type ExampleImage = {
   url: string;
@@ -66,7 +99,16 @@ type CreateMovementType = {
 };
 
 async function createMovement(req: Request, res: Response) {
-  const validatedData = createMovementSchema.parse(req.body);
+  const validation = createMovementSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Invalid movement data",
+      errors: validation.error.issues,
+    });
+  }
+
+  const validatedData = validation.data;
 
   const {
     movementName,
@@ -154,9 +196,39 @@ async function getMovementById(req: Request, res: Response) {
 
 async function updateMovementById(req: Request, res: Response) {
   const { id } = req.params;
-  const updates = req.body;
+  const validation = movementBaseSchema.partial().safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Invalid movement data",
+      errors: validation.error.issues,
+    });
+  }
+
+  const updates = validation.data;
 
   try {
+    const existingMovement = await Movement.findById(id);
+
+    if (!existingMovement) {
+      return res.status(404).json({
+        message: "Movement not found",
+      });
+    }
+
+    const mergedMovement = {
+      ...existingMovement.toObject(),
+      ...updates,
+    };
+
+    const completeValidation = createMovementSchema.safeParse(mergedMovement);
+
+    if (!completeValidation.success) {
+      return res.status(400).json({
+        message: "Invalid movement data",
+        errors: completeValidation.error.issues,
+      });
+    }
+
     const movementFromDB = await Movement.findByIdAndUpdate(id, updates, {
       returnDocument: "after",
       runValidators: true,
@@ -185,6 +257,12 @@ async function updateMovementById(req: Request, res: Response) {
         message: "Invalid movement data",
       });
     }
+
+    console.log("Unexpecred movement update error:", err);
+
+    return res.status(500).json({
+      message: "Unexpected server error",
+    });
   }
 }
 
