@@ -14,9 +14,18 @@ const {
 const requireAuth = require("../middleware/auth.middleware");
 
 const router = express.Router();
+
+// router.route("/")
+//   .post(requireAuth, createMovement)
+//   .get(getMovements)
+
 router.post("/", requireAuth, createMovement);
 router.get("/", getMovements);
-router.get("/admin/all", requireAuth, getAllMovements);
+router.get(
+  "/admin/all",
+  // requireAuth,
+  getAllMovements,
+);
 router.patch("/set-featured/:id", requireAuth, setFeatured);
 router.get("/get-featured", getFeatured);
 router.get("/:id", getMovementById);
@@ -24,3 +33,4 @@ router.patch("/:id", requireAuth, updateMovementById);
 router.delete("/:id", requireAuth, deleteMovementById);
 
 module.exports = router;
+``;

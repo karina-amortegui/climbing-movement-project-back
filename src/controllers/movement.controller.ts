@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { z } from "zod";
+import _ from "lodash";
 
-const Movement = require("../models/movement.model.js");
+import Movement from "../models/movement.model";
+
+// const Movement = require("../models/movement.model.js");
 
 const exampleImageSchema = z.object({
   url: z.string().min(1),
@@ -152,7 +155,11 @@ async function createMovement(req: Request, res: Response) {
   });
 }
 
+// WORKING ON -> pagination, querying
 async function getMovements(req: Request, res: Response) {
+  // http://localhost:8787/movements?page=1&limit=10
+  // req.query
+
   const movementsFromDB = await Movement.find({
     movementStatus: "published",
   });
@@ -163,13 +170,46 @@ async function getMovements(req: Request, res: Response) {
   });
 }
 
+// WORKING ON -> pagination, querying
 async function getAllMovements(req: Request, res: Response) {
-  const movementsFromDB = await Movement.find();
+  // http://localhost:8787/movements/admin/all?page=1&limit=10&order=DESC
+  // http://localhost:8787/movements/admin/all?movementExecution=dynamic
+
+  const {
+    page = 1,
+    limit = 10,
+    order = "DESC",
+    orderBy = "createdAt",
+  } = req.query;
+
+  const q = _.omit(req.query, ["page", "limit", "order"]);
+
+  const totalCount = await Movement.countDocuments(q);
+  const totalPages = Math.ceil(totalCount / Number(limit));
+
+  const movementsFromDB = await Movement.find(q)
+    // .sort({ [orderBy as string]: order === "DESC" ? -1 : 1 })
+    .sort({
+      [orderBy as string]: -1,
+    })
+    .skip((Number(page) - 1) * Number(limit))
+    .limit(Number(limit));
 
   res.status(200).json({
     message: "All movements fetched successfully",
     data: movementsFromDB,
     total: movementsFromDB.length,
+    currentPage: Number(page),
+    prevPageUrl:
+      Number(page) === 1
+        ? null
+        : `/movements/admin/all?page=${Number(page) - 1}&limit=${limit}`,
+    nextPageUrl:
+      Number(page) === totalPages
+        ? null
+        : `/movements/admin/all?page=${Number(page) + 1}&limit=${limit}`,
+    totalPages,
+    pageSize: Number(limit),
   });
 }
 

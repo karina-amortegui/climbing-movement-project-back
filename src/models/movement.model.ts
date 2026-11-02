@@ -48,4 +48,5 @@ const movementSchema = new Schema({
 
 const Movement = model("movement", movementSchema);
 
-module.exports = Movement;
+// module.exports = Movement;
+export default Movement;
