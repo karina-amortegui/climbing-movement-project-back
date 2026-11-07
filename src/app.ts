@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "https://climbing-movement-project-front.vercel.app/",
+      "https://climbing-movement-project-front.vercel.app",
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],

@@ -9,6 +9,7 @@ const {
   deleteMovementById,
   setFeatured,
   getFeatured,
+  searchMovements,
 } = require("../controllers/movement.controller");
 
 const requireAuth = require("../middleware/auth.middleware");
@@ -26,6 +27,8 @@ router.get(
   // requireAuth,
   getAllMovements,
 );
+router.get("/search", searchMovements);
+
 router.patch("/set-featured/:id", requireAuth, setFeatured);
 router.get("/get-featured", getFeatured);
 router.get("/:id", getMovementById);
@@ -33,4 +36,3 @@ router.patch("/:id", requireAuth, updateMovementById);
 router.delete("/:id", requireAuth, deleteMovementById);
 
 module.exports = router;
-``;

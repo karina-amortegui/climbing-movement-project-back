@@ -170,42 +170,69 @@ async function getMovements(req: Request, res: Response) {
   });
 }
 
+const movementQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  order: z.enum(["ASC", "DESC"]).default("DESC"),
+  orderBy: z
+    .enum(["movementName", "createdAt", "movementStatus"])
+    .default("createdAt"),
+  movementStatus: z.enum(["draft", "needs-review", "published"]).optional(),
+  movementExecution: z.enum(["static", "dynamic"]).optional(),
+});
+
 // WORKING ON -> pagination, querying
 async function getAllMovements(req: Request, res: Response) {
   // http://localhost:8787/movements/admin/all?page=1&limit=10&order=DESC
   // http://localhost:8787/movements/admin/all?movementExecution=dynamic
+  // http://localhost:8787/movements/admin/all?orderBy=movementName&order=DESC
 
-  const {
-    page = 1,
-    limit = 10,
-    order = "DESC",
-    orderBy = "createdAt",
-  } = req.query;
+  const validation = movementQuerySchema.safeParse(req.query);
 
-  const q = _.omit(req.query, ["page", "limit", "order"]);
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Invalid query parameters",
+      errors: validation.error.issues,
+    });
+  }
+
+  const { page, limit, order, orderBy } = validation.data;
+
+  const q = _.pick(validation.data, ["movementStatus", "movementExecution"]);
 
   const totalCount = await Movement.countDocuments(q);
   const totalPages = Math.ceil(totalCount / Number(limit));
 
   const movementsFromDB = await Movement.find(q)
-    // .sort({ [orderBy as string]: order === "DESC" ? -1 : 1 })
-    .sort({ _id: -1 })
+    .sort({ [orderBy as string]: order === "DESC" ? -1 : 1 })
+    .collation({ locale: "en", strength: 2 })
     .skip((Number(page) - 1) * Number(limit))
     .limit(Number(limit));
+
+  const queryParams = new URLSearchParams({
+    limit: String(limit),
+    ...Object.fromEntries(
+      Object.entries(q).map(([key, value]) => [key, String(value)]),
+    ),
+    orderBy: String(orderBy),
+    order: String(order),
+  });
+
+  const getPageUrl = (pageNumber: number) => {
+    const params = new URLSearchParams(queryParams);
+    params.set("page", String(pageNumber));
+
+    return `/movements/admin/all?${params.toString()}`;
+  };
 
   res.status(200).json({
     message: "All movements fetched successfully",
     data: movementsFromDB,
     total: movementsFromDB.length,
     currentPage: Number(page),
-    prevPageUrl:
-      Number(page) === 1
-        ? null
-        : `/movements/admin/all?page=${Number(page) - 1}&limit=${limit}`,
+    prevPageUrl: Number(page) <= 1 ? null : getPageUrl(Number(page) - 1),
     nextPageUrl:
-      Number(page) === totalPages
-        ? null
-        : `/movements/admin/all?page=${Number(page) + 1}&limit=${limit}`,
+      Number(page) >= totalPages ? null : getPageUrl(Number(page) + 1),
     totalPages,
     pageSize: Number(limit),
   });
@@ -361,6 +388,29 @@ async function getFeatured(req: Request, res: Response) {
   });
 }
 
+async function searchMovements(req: Request, res: Response) {
+  const { searchKey, searchTerm } = req.query;
+
+  const search = await Movement.find({
+    [String(searchKey)]: {
+      $regex: searchTerm,
+      $options: "i",
+    },
+  });
+
+  res.status(200).json({
+    message: "searched movements fetched successfully",
+    data: search,
+    total: search.length,
+    // currentPage: Number(page),
+    // prevPageUrl: Number(page) <= 1 ? null : getPageUrl(Number(page) - 1),
+    // nextPageUrl:
+    //   Number(page) >= totalPages ? null : getPageUrl(Number(page) + 1),
+    // totalPages,
+    // pageSize: Number(limit),
+  });
+}
+
 // makes functions available to other files to import
 export {
   createMovement,
@@ -371,4 +421,5 @@ export {
   deleteMovementById,
   setFeatured,
   getFeatured,
+  searchMovements,
 };
