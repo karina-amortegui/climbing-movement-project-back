@@ -11,7 +11,14 @@ const Admin = require("./models/admin.model");
 const movementRouter = require("./routes/movement.routes");
 
 const app = express();
-console.log("CMP DIAGNOSTIC: app.ts initialized");
+
+const dbConnect = require("./config/db.connect.js");
+
+if (process.env.NODE_ENV === "production") {
+  dbConnect().catch((error: unknown) => {
+    console.error("Production MongoDB connection failed:", error);
+  });
+}
 
 // middlewares
 app.use(express.json());
