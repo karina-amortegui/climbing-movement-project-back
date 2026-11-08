@@ -11,6 +11,7 @@ const Admin = require("./models/admin.model");
 const movementRouter = require("./routes/movement.routes");
 
 const app = express();
+console.log("CMP DIAGNOSTIC: app.ts initialized");
 
 // middlewares
 app.use(express.json());

@@ -13,7 +13,7 @@ async function dbConnect() {
     return connection;
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
-    return null;
+    throw error;
   }
 }
 
