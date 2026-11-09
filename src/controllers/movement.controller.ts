@@ -204,7 +204,7 @@ async function getAllMovements(req: Request, res: Response) {
   const totalPages = Math.ceil(totalCount / Number(limit));
 
   const movementsFromDB = await Movement.find(q)
-    .sort({ [orderBy as string]: order === "DESC" ? -1 : 1 })
+    .sort({ [orderBy as string]: order === "DESC" ? -1 : 1, _id: 1 })
     .collation({ locale: "en", strength: 2 })
     .skip((Number(page) - 1) * Number(limit))
     .limit(Number(limit));
