@@ -12,9 +12,14 @@ async function dbConnect() {
 
     return connection;
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error;
+    console.error("MongoDB connection diagnostics:", {
+      name: error instanceof Error ? error.name : "Unknown",
+      message: error instanceof Error ? error.message : String(error),
+      cause:
+        error instanceof Error && "cause" in error
+          ? String(error.cause)
+          : undefined,
+    });
   }
 }
-
 module.exports = dbConnect;
