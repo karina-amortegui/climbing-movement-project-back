@@ -40,10 +40,10 @@ function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
 
     next();
   } catch (err) {
-    console.log(
-      "JWT verification failed:",
-      err instanceof Error ? err.name : "Unknown error",
-    );
+    console.log("JWT verification failed:", {
+      name: err instanceof Error ? err.name : "Unknown error",
+      message: err instanceof Error ? err.message : "Unknown error",
+    });
     return res.status(401).json({
       message: "Invalid or expired token",
     });
