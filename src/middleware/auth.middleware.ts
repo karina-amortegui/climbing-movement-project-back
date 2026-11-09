@@ -8,7 +8,7 @@ interface AuthRequest extends Request {
 }
 
 interface AdminTokenPayload {
-  adminId: string,
+  adminId: string;
   role: string;
 }
 
@@ -22,7 +22,7 @@ function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
       message: "Authentication required",
     });
   }
-  
+
   const token = authHeader.split(" ")[1];
 
   try {
@@ -31,20 +31,23 @@ function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
     }
     const decoded = jwt.verify(
       token,
-       process.env.JWT_SECRET
-      ) as AdminTokenPayload;
+      process.env.JWT_SECRET,
+    ) as AdminTokenPayload;
     req.admin = {
       adminId: decoded.adminId,
       role: decoded.role,
     };
 
     next();
-
   } catch (err) {
+    console.log(
+      "JWT verification failed:",
+      err instanceof Error ? err.name : "Unknown error",
+    );
     return res.status(401).json({
       message: "Invalid or expired token",
     });
-  };
-};
+  }
+}
 
 module.exports = requireAuth;
