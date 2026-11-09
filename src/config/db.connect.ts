@@ -15,9 +15,20 @@ async function dbConnect() {
     console.error("MongoDB connection diagnostics:", {
       name: error instanceof Error ? error.name : "Unknown",
       message: error instanceof Error ? error.message : String(error),
-      cause:
-        error instanceof Error && "cause" in error
-          ? String(error.cause)
+      servers:
+        error &&
+        typeof error === "object" &&
+        "reason" in error &&
+        error.reason &&
+        typeof error.reason === "object" &&
+        "servers" in error.reason &&
+        error.reason.servers instanceof Map
+          ? Array.from(error.reason.servers.values()).map((server: any) => ({
+              address: server.address,
+              errorName: server.error?.name,
+              errorMessage: server.error?.message,
+              errorCause: server.error?.cause?.message,
+            }))
           : undefined,
     });
   }
