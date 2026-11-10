@@ -2,12 +2,30 @@ const mongoose = require("mongoose");
 
 const MONGO_URI = process.env.MONGO_URI;
 
+let connectionPromise: Promise<any> | null = null;
+
 async function dbConnect() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose;
+  }
+
+  if (connectionPromise) {
+    return connectionPromise;
+  }
+
   try {
-    const connection = await mongoose.connect(MONGO_URI, {
-      autoIndex: true,
-      autoCreate: true,
-    });
+    connectionPromise = mongoose
+      .connect(MONGO_URI, {
+        autoIndex: true,
+        autoCreate: true,
+      })
+      .catch((error: unknown) => {
+        connectionPromise = null;
+        throw error;
+      });
+
+    const connection = await connectionPromise;
+
     console.log("connection to mongoDB successful");
 
     return connection;
@@ -31,6 +49,9 @@ async function dbConnect() {
             }))
           : undefined,
     });
+
+    connectionPromise = null;
+    throw error;
   }
 }
 module.exports = dbConnect;

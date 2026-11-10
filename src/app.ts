@@ -14,14 +14,20 @@ const app = express();
 
 const dbConnect = require("./config/db.connect.js");
 
-if (process.env.NODE_ENV === "production") {
-  dbConnect().catch((error: unknown) => {
-    console.error("Production MongoDB connection failed:", error);
-  });
-}
-
 // middlewares
 app.use(express.json());
+app.use(async (req: Request, res: Response, next: Function) => {
+  try {
+    await dbConnect();
+    next();
+  } catch (error) {
+    console.error("Database unavailable:", error);
+
+    res.status(503).json({
+      message: "Database temporarily unavailable",
+    });
+  }
+});
 app.use(
   cors({
     origin: [
