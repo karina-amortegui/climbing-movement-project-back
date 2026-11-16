@@ -390,7 +390,9 @@ async function getFeatured(req: Request, res: Response) {
 
 async function searchMovements(req: Request, res: Response) {
   const { searchKey, searchTerm } = req.query;
-
+  if (searchTerm === "") {
+    return getAllMovements(req, res);
+  }
   const search = await Movement.find({
     [String(searchKey)]: {
       $regex: searchTerm,
@@ -402,12 +404,11 @@ async function searchMovements(req: Request, res: Response) {
     message: "searched movements fetched successfully",
     data: search,
     total: search.length,
-    // currentPage: Number(page),
-    // prevPageUrl: Number(page) <= 1 ? null : getPageUrl(Number(page) - 1),
-    // nextPageUrl:
-    //   Number(page) >= totalPages ? null : getPageUrl(Number(page) + 1),
-    // totalPages,
-    // pageSize: Number(limit),
+    currentPage: 1,
+    prevPageUrl: null,
+    nextPageUrl: null,
+    totalPages: 1,
+    pageSize: search.length,
   });
 }
 
