@@ -58,3 +58,25 @@ original =
 original.indexOf("*")
 original.replace(origina.indexOf("\_"), " ")
 original[original.indexOf(" ") + 1).toUppercase()
+
+function arithmeticSequenceElements(a, d, n) {
+// initialize array -> empty array -> []
+const sequence = [];
+
+// [1, 3, 5, 7, 9]
+
+// a - 1
+// d - 2
+// n - 5
+
+for (let i = 0; i < 5; i++) {
+// i = 5
+// a - 11
+sequence.push(a);
+a += d;
+}
+// [1, 3, 5, 7, 9] -> ", " 1 + ", " + 3 + ", " + 5 + ", " + 7 + ", " + 9 = "1, 3, 5, 7, 9"
+return sequence.join(", "); //join - array --> string
+}
+
+arithmeticSequenceElements(1, 2, 5);

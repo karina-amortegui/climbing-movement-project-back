@@ -15,6 +15,7 @@ const exampleImageSchema = new Schema({
 const movementSchema = new Schema(
   {
     movementName: { type: String, required: true, unique: true },
+    displayName: { type: String, required: false, default: null },
     movementSummary: { type: String, required: false },
     movementDescription: { type: String, required: false },
     movementExecution: {

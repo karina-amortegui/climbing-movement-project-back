@@ -22,11 +22,7 @@ const router = express.Router();
 
 router.post("/", requireAuth, createMovement);
 router.get("/", getMovements);
-router.get(
-  "/admin/all",
-  // requireAuth,
-  getAllMovements,
-);
+router.get("/admin/all", requireAuth, getAllMovements);
 router.get("/search", searchMovements);
 
 router.patch("/set-featured/:id", requireAuth, setFeatured);

@@ -18,11 +18,16 @@ Authorization: Bearer YOUR_TOKEN_HERE
 GET {{baseUrl}}/put mongodb movement id here
 
 ### update movement by id
-PATCH {{baseUrl}}/put mongodb movement id here 
+PATCH {{baseUrl}}/6acef3fe7b6cfaffc09b7de1
 Content-Type: application/json 
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNmE5NGIwMTAyNGVjMmU4MThmZGViZmRjIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzk0ODc2MDM1LCJleHAiOjE3OTQ4Nzk2MzV9.inrmcSmTg9dg9x0WsMc81THjNQUQG5V_a1cG_m_hbO0
+
+{
+  "displayName": "Rock Over"
+}
 
 ### (hard) delete movement by id
 DELETE {{baseUrl}}/put mongodb movement id here
 Authorization: Bearer YOUR_TOKEN_HERE
 
+//put mongodb movement id here 

@@ -20,6 +20,7 @@ const exampleImageSchema = z.object({
 
 const movementBaseSchema = z.object({
   movementName: z.string().min(1),
+  displayName: z.string().min(1).optional(),
   movementSummary: z.string(),
   movementDescription: z.string(),
   movementWhenToUse: z.string(),
@@ -37,6 +38,8 @@ const movementBaseSchema = z.object({
   movementResearchNotes: z.string().optional(),
   movementExtraNotes: z.string().optional(),
   exampleImages: z.array(exampleImageSchema).optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 const createMovementSchema = movementBaseSchema.refine(
@@ -86,6 +89,7 @@ type ExampleImage = {
 
 type CreateMovementType = {
   movementName: string;
+  displayName: string;
   movementSummary: string;
   movementDescription: string;
   movementExecution: string;
@@ -115,6 +119,7 @@ async function createMovement(req: Request, res: Response) {
 
   const {
     movementName,
+    displayName,
     movementSummary,
     movementDescription,
     movementExecution,
@@ -132,6 +137,7 @@ async function createMovement(req: Request, res: Response) {
 
   const newMovement = new Movement({
     movementName,
+    displayName,
     movementSummary,
     movementDescription,
     movementExecution,
